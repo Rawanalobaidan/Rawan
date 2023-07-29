@@ -1,0 +1,309 @@
+
+import java.io.FileNotFoundException;
+import java.text.*;
+import java.time.format.DateTimeFormatter;
+import javafx.event.*;
+import javafx.geometry.*;
+import javafx.scene.Scene;
+import java.util.logging.*;
+import javafx.application.Application;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.stage.Stage;
+ 
+public class first extends Application {
+ 
+    TextField TDN_taxtthedonorname, TDC_taxtthedonorcontact, TC_taxtcenter;
+    DatePicker DP_datepicker;
+    FlowPane BBTA_btnbox2args;
+    TextArea TAA_taxtareaargs;
+    Button BAC_btnaddcenter, BAD_btnaddthedonor, BAD_btnadddonation;
+    Button DBA_displybtnsrgs, CBA_clearbtnsrgs, SBA_savebtnsrgs, LBA_loadbtnsrgs;
+    ComboBox DBCB_thedonorbloodcombobox;
+    GridPane BP_basepan, P1_pan1, P2_pan2, P3_pan3, pan4;
+    BloodCollectioncenter center;
+    thedonor thedonor;
+    ListView<String> TLV_typelistview;
+ 
+   
+    @Override
+    public void start(Stage SA_stageargs) {
+        BP_basepan = new GridPane();
+        BP_basepan.setPadding(new Insets(9, 9, 9, 9));
+        BP_basepan.setAlignment(Pos.TOP_CENTER);
+ 
+        TC_taxtcenter = new TextField("");
+        BAC_btnaddcenter = new Button("add center name ");
+ 
+        P1_pan1 = new GridPane();
+        P1_pan1.setPadding(new Insets(13, 13, 13, 13));
+        P1_pan1.setAlignment(Pos.TOP_LEFT);
+        P1_pan1.setHgap(9);
+        P1_pan1.setVgap(5);
+ 
+        P1_pan1.add(new Label("center Name: "), 0, 0);
+        P1_pan1.add(TC_taxtcenter, 1, 0);
+ 
+        P1_pan1.add(BAC_btnaddcenter, 5, 0);
+ 
+        P2_pan2 = new GridPane();
+        P2_pan2.setPadding(new Insets(13, 13, 13, 13));
+        P2_pan2.setAlignment(Pos.TOP_LEFT);
+        P2_pan2.setHgap(9);
+        P2_pan2.setVgap(5);
+ 
+     
+        TDN_taxtthedonorname = new TextField("");
+ 
+        DBCB_thedonorbloodcombobox = new ComboBox();
+        DBCB_thedonorbloodcombobox.setPrefSize(170, 30);
+        DBCB_thedonorbloodcombobox.setPromptText("the Blood Type");
+        DBCB_thedonorbloodcombobox.getItems().add("O+");
+        DBCB_thedonorbloodcombobox.getItems().add("O-");
+        DBCB_thedonorbloodcombobox.getItems().add("A+");
+        DBCB_thedonorbloodcombobox.getItems().add("A-");
+        DBCB_thedonorbloodcombobox.getItems().add("B+");
+        DBCB_thedonorbloodcombobox.getItems().add("B-");
+        DBCB_thedonorbloodcombobox.getItems().add("AB+");
+        DBCB_thedonorbloodcombobox.getItems().add("AB-");
+ 
+        TDC_taxtthedonorcontact = new TextField("");
+        BAD_btnaddthedonor = new Button("Add thedonor to center");
+        P2_pan2.add(new Label("thedonor Name:"), 0, 0);
+        P2_pan2.add(TDN_taxtthedonorname, 1, 0);
+        P2_pan2.add(new Label("Blood type:"), 0, 1);
+        P2_pan2.add(DBCB_thedonorbloodcombobox, 1, 1);
+        P2_pan2.add(new Label("Contact Number:"), 0, 2);
+        P2_pan2.add(TDC_taxtthedonorcontact, 1, 2);
+        P2_pan2.add(BAD_btnaddthedonor, 2, 2);
+ 
+        P3_pan3 = new GridPane();
+        P3_pan3.setPadding(new Insets(14, 14, 14, 14));
+        P3_pan3.setAlignment(Pos.TOP_LEFT);
+        P3_pan3.setHgap(10);
+        P3_pan3.setVgap(6);
+ 
+        TLV_typelistview = new ListView<String>();
+        TLV_typelistview.setPrefSize(150, 200);
+        P3_pan3.add(new Label("Donation type"), 0, 0);
+        P3_pan3.add(TLV_typelistview, 1, 0);
+        P3_pan3.add(new Label("Date D:M:Y"), 0, 1);
+        DP_datepicker = new DatePicker();
+        P3_pan3.add(DP_datepicker, 1, 1);
+ 
+        BAD_btnadddonation = new Button("Add Donation to thedonor");
+        P3_pan3.add(BAD_btnadddonation, 2, 1);
+ 
+        DBA_displybtnsrgs = new Button("Display");
+        DBA_displybtnsrgs.setPrefSize(80, 40);
+ 
+        SBA_savebtnsrgs = new Button("Save");
+        SBA_savebtnsrgs.setPrefSize(80, 40);
+ 
+        LBA_loadbtnsrgs = new Button("Load");
+        LBA_loadbtnsrgs.setPrefSize(80, 40);
+ 
+        CBA_clearbtnsrgs = new Button("Clear");
+        CBA_clearbtnsrgs.setPrefSize(80, 40);
+ 
+        BBTA_btnbox2args = new FlowPane(DBA_displybtnsrgs, LBA_loadbtnsrgs, SBA_savebtnsrgs, CBA_clearbtnsrgs);
+        BBTA_btnbox2args.setHgap(5);
+        BBTA_btnbox2args.setVgap(6);
+ 
+        BAC_btnaddcenter.setOnAction(new BtnEventsHandler());
+        BAD_btnaddthedonor.setOnAction(new BtnEventsHandler());
+        BAD_btnadddonation.setOnAction(new BtnEventsHandler());
+        DBA_displybtnsrgs.setOnAction(new BtnEventsHandler());
+        SBA_savebtnsrgs.setOnAction(new BtnEventsHandler());
+        LBA_loadbtnsrgs.setOnAction(new BtnEventsHandler());
+        CBA_clearbtnsrgs.setOnAction(new BtnEventsHandler());
+ 
+        DBA_displybtnsrgs.setStyle("-fx-background-color: blue; -fx-text-fill: white;");
+        SBA_savebtnsrgs.setStyle("-fx-background-color: blue; -fx-text-fill: white;");
+        LBA_loadbtnsrgs.setStyle("-fx-background-color: blue; -fx-text-fill: white;");
+        CBA_clearbtnsrgs.setStyle("-fx-background-color: blue; -fx-text-fill: white;");
+        BAC_btnaddcenter.setStyle("-fx-background-color: blue; -fx-text-fill: white;");
+        BAD_btnaddthedonor.setStyle("-fx-background-color: blue; -fx-text-fill: white;");
+        BAD_btnadddonation.setStyle("-fx-background-color: blue; -fx-text-fill: white;");
+ 
+        pan4 = new GridPane();
+        pan4.setPadding(new Insets(10, 10, 10, 10));
+        TAA_taxtareaargs = new TextArea();
+ 
+        TAA_taxtareaargs.setPrefColumnCount(50);
+        TAA_taxtareaargs.setPrefRowCount(20);
+ 
+        pan4.add(TAA_taxtareaargs, 0, 0);
+        pan4.add(BBTA_btnbox2args, 1, 0);
+ 
+        BP_basepan.add(P1_pan1, 0, 0);
+        BP_basepan.add(P2_pan2, 0, 1);
+        BP_basepan.add(P3_pan3, 0, 2);
+        BP_basepan.add(pan4, 0, 3);
+ 
+        Scene scArgs = new Scene(BP_basepan, 650, 550);
+        SA_stageargs.setScene(scArgs);
+        SA_stageargs.setTitle("THE LAB CENTER APP");
+        SA_stageargs.show();
+ 
+        DBCB_thedonorbloodcombobox.setOnAction(new BtnEventsHandler());
+ 
+    }
+ 
+    private class BtnEventsHandler implements EventHandler<ActionEvent> {
+ 
+        @Override
+        public void handle(ActionEvent action) {
+ 
+            if (action.getSource().equals(BAC_btnaddcenter)) {
+                if (TC_taxtcenter.getText().equals("")) {
+                    MassageError("Error, you must add a new center name");
+                } else {
+                    center = new BloodCollectioncenter(TC_taxtcenter.getText());
+                    informationsMassage("it has been successfully added");
+                }
+ 
+            } else if (action.getSource().equals(DBA_displybtnsrgs)) {
+                TAA_taxtareaargs.clear();
+                TAA_taxtareaargs.setText(center.toString());
+            } else if (action.getSource().equals(CBA_clearbtnsrgs)) {
+                TAA_taxtareaargs.setText("");
+            } else if (action.getSource().equals(BAD_btnaddthedonor)) {
+ 
+                if (TDN_taxtthedonorname.getText().equals("")) {
+                    MassageError("Error, you must add thedonor name");
+                } else if ((String) DBCB_thedonorbloodcombobox.getValue() == null) {
+                    MassageError("Error, you must add thedonor blood type");
+                } else if (TDC_taxtthedonorcontact.getText().equals("")) {
+                    MassageError("Error, you must add thedonor contact number");
+                } else {
+                    thedonor = new thedonor(TDN_taxtthedonorname.getText(), "" + DBCB_thedonorbloodcombobox.getValue(), TDC_taxtthedonorcontact.getText());
+                    try {
+                        center.addthedonor(thedonor);
+                        informationsMassage("The thedonor has been added successfully");
+                    } catch (DuplicateException ex) {
+                        MassageError("The thedonor is exist, pleas add another thedonor name");
+                    }
+                }
+ 
+                TAA_taxtareaargs.clear();
+                TAA_taxtareaargs.setText(center.toString());
+            } else if (action.getSource().equals(BAD_btnadddonation)) {
+                String pType = (String) TLV_typelistview.getSelectionModel().getSelectedItem();
+ 
+                if (pType == null) {
+                    MassageError("Error, you must select a donation type");
+                } else if (TC_taxtcenter.getText().equals("")) {
+                    MassageError("Error, you must add new center name");
+                } else if (TDN_taxtthedonorname.getText().equals("")) {
+                    MassageError("Error, you must add thedonor name");
+                } else if ((String) DBCB_thedonorbloodcombobox.getValue() == null) {
+                    MassageError("Error, you must thedonor blood type");
+                } else if (TDC_taxtthedonorcontact.getText().equals("")) {
+                    MassageError("Error, you must add thedonor contact number");
+                } else if (DP_datepicker.getValue() == null) {
+                    MassageError("Error, you must add the date");
+ 
+                } else {
+                    try {
+                        boolean checkAvaliablity = false;
+                        if (pType.equals("Whole Blood")) {
+                            WholeBloodDonation wb = new WholeBloodDonation(new SimpleDateFormat("dd/MM/yyyy").parse(DP_datepicker.getValue().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))));
+                            checkAvaliablity = thedonor.AddBloodDonation(wb);
+                        } else if (pType.equals("Power Red")) {
+ 
+                            PowerRedDonation wb = new PowerRedDonation(new SimpleDateFormat("dd/MM/yyyy").parse(DP_datepicker.getValue().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))));
+                            checkAvaliablity = thedonor.AddBloodDonation(wb);
+                        } else if (pType.equals("Plasma")) {
+                            PlasmaDonation wb = new PlasmaDonation(new SimpleDateFormat("dd/MM/yyyy").parse(DP_datepicker.getValue().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))));
+                            checkAvaliablity = thedonor.AddBloodDonation(wb);
+                        } else if (pType.equals("Platelet")) {
+                            PlateletDonation wb = new PlateletDonation(new SimpleDateFormat("dd/MM/yyyy").parse(DP_datepicker.getValue().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))));
+                            checkAvaliablity = thedonor.AddBloodDonation(wb);
+                        }
+                        if (checkAvaliablity == true) {
+                            informationsMassage("the donation has been added Successfuly");
+                        } else {
+                            MassageError("the donation unavailable");
+                        }
+                    } catch (ParseException ex) {
+                        Logger.getLogger(first.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                TAA_taxtareaargs.clear();
+                TAA_taxtareaargs.setText(center.toString());
+            } else if (action.getSource().equals(SBA_savebtnsrgs)) {
+                center.save();
+                informationsMassage("the center data has been saved");
+            } else if (action.getSource().equals(LBA_loadbtnsrgs)) {
+                if (TC_taxtcenter.getText().equals("")) {
+                    MassageError("Error, you must add center name");
+                } else {
+                    center = new BloodCollectioncenter(TC_taxtcenter.getText());
+ 
+                    try {
+                        center.loadData();
+                        TAA_taxtareaargs.setText("");
+                        TAA_taxtareaargs.setText(center.toString());
+                        informationsMassage("the center data has been loaded");
+                    } catch (DuplicateException ex) {
+                        MassageError("There is Duplicate Exception");
+                    } catch (ParseException ex) {
+                        MassageError("parsing problem");
+                    } catch (FileNotFoundException ex) {
+                        MassageError("Error , File not found!! you need to save first!");
+                    }
+                }
+ 
+            }
+            if (DBCB_thedonorbloodcombobox.getValue() != null) {
+                if (DBCB_thedonorbloodcombobox.getValue().equals("AB+")
+                        || DBCB_thedonorbloodcombobox.getValue().equals("AB-")) {
+                    TLV_typelistview.getItems().removeAll(TLV_typelistview.getItems());
+                    TLV_typelistview.getItems().add("Whole Blood");
+                    TLV_typelistview.getItems().add("Plasma");
+                    TLV_typelistview.getItems().add("Platelet");
+ 
+                } else if (DBCB_thedonorbloodcombobox.getValue().equals("O-")
+                        || DBCB_thedonorbloodcombobox.getValue().equals("B+")) {
+                    TLV_typelistview.getItems().removeAll(TLV_typelistview.getItems());
+                    TLV_typelistview.getItems().add("Whole Blood");
+                    TLV_typelistview.getItems().add("Power Red");
+                } else if (DBCB_thedonorbloodcombobox.getValue().equals("A-")
+                        || DBCB_thedonorbloodcombobox.getValue().equals("O+")) {
+                    TLV_typelistview.getItems().removeAll(TLV_typelistview.getItems());
+                    TLV_typelistview.getItems().add("Whole Blood");
+                    TLV_typelistview.getItems().add("Power Red");
+                    TLV_typelistview.getItems().add("Platelet");
+ 
+                } else {
+                    TLV_typelistview.getItems().removeAll(TLV_typelistview.getItems());
+                    TLV_typelistview.getItems().add("Whole Blood");
+                    TLV_typelistview.getItems().add("Platelet");
+                }
+ 
+            }
+ 
+        }
+    }
+ 
+    public void informationsMassage(String strArgs) {
+        Alert alartArgs = new Alert(Alert.AlertType.INFORMATION);
+        alartArgs.setTitle("Information");
+        alartArgs.setHeaderText(null);
+        alartArgs.setContentText(strArgs);
+        alartArgs.showAndWait();
+    }
+ 
+    public void MassageError(String strArgs) {
+        Alert alartArgs = new Alert(Alert.AlertType.ERROR);
+        alartArgs.setTitle("Error");
+        alartArgs.setHeaderText(null);
+        alartArgs.setContentText(strArgs);
+        alartArgs.showAndWait();
+    }
+ 
+    public static void main(String[] args) {
+        first.launch(args);
+    }
+}
